@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+<main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+  <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Review 區間資料</h1>
+  </div>
+  <div class="shadow-sm bg-light p-3 rounded-2 d-flex justify-content-start">
+    <form method="POST" action="">
+
+      <div class=" mb-3">
+        {{ section_select_form.perch_mount_name.label(class="form-label") }}
+        {{ section_select_form.perch_mount_name(class="form-control", list="perch-mount-datalist") }}
+        <datalist id="perch-mount-datalist">
+          <option value="九地樹林">
+          <option value="土庫">
+          <option value="大發">
+        </datalist>
+      </div>
+      <div class="mb-3">
+        {{ section_select_form.check_date.label(class="form-label") }}
+        {{ section_select_form.check_date(class="form-control") }}
+      </div>
+      {{ section_select_form.submit_button(class="btn btn-primary") }}
+    </form>
+  </div>
+
+</main>
+
+
+{% endblock %}
