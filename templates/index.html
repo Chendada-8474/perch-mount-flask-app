@@ -8,26 +8,43 @@
     <h1 class="h2">Review 區間資料</h1>
   </div>
   <div class="shadow-sm bg-light p-3 rounded-2 d-flex justify-content-start">
-    <form method="POST" action="">
+    <div>
+      <div class=" mb-3">
+        <label for="perch_mount_name" class="form-label">棲架名稱</label>
+        <input id="perch_mount_name" type="text" class="form-control" list="perch_mount_datalist">
+        <datalist id="perch_mount_datalist">
+          {% for pm_name in perch_mount_names %}
+          <option value="{{ pm_name }}">
+            {% endfor %}
+        </datalist>
+      </div>
+      <div class="mb-3">
+        <label for="check_date" class="form-label">檢查日期</label>
+        <input id="check_date" type="date" class="form-control">
+      </div>
+      <button id="review_button" class="btn btn-primary">Review</button>
+    </div>
 
+    <!-- <form method="POST" action="">
       <div class=" mb-3">
         {{ section_select_form.perch_mount_name.label(class="form-label") }}
         {{ section_select_form.perch_mount_name(class="form-control", list="perch-mount-datalist") }}
         <datalist id="perch-mount-datalist">
-          <option value="九地樹林">
-          <option value="土庫">
-          <option value="大發">
+          {% for pm_name in perch_mount_names %}
+          <option value="{{ pm_name }}">
+            {% endfor %}
         </datalist>
       </div>
       <div class="mb-3">
         {{ section_select_form.check_date.label(class="form-label") }}
         {{ section_select_form.check_date(class="form-control") }}
       </div>
-      {{ section_select_form.submit_button(class="btn btn-primary") }}
-    </form>
+      {{ section_select_form.review_button(class="btn btn-primary") }}
+    </form> -->
   </div>
 
 </main>
+<script src="{{ url_for('static', filename='js/index.js')}}"></script>
 
 
 {% endblock %}

@@ -9,4 +9,4 @@ class SectionSelectForm(FlaskForm):
         validators=[DataRequired(message="Not Null")],
     )
     check_date = DateField(validators=[DataRequired(message="Not Null")])
-    submit_button = SubmitField("Review")
+    review_button = SubmitField("Review")

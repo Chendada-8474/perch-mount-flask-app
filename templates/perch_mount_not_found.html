@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+<main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h3 class="h3">{{perch_mount_name}} {{ check_date }}</h3>
+    </div>
+    <div class="shadow-sm bg-light p-3 rounded-2">
+
+        <div class="alert alert-warning">
+            找不到<br>
+            棲架名稱：{{perch_mount_name}}<br>
+            檢查日期：{{ check_date }}<br>
+            的區間資料，請再確認一下你輸入的資訊是否正確。
+        </div>
+        <a href="{{ url_for('index') }}"><button type="button" class="btn btn-primary">回到主頁</button></a>
+    </div>
+
+</main>
+
+{% endblock %}
