@@ -1,0 +1,17 @@
+div.pm-media img:hover {
+  opacity: 0.5;
+  transform: scale(1.02);
+}
+
+div.pm-media img {
+  transition: 0.3s;
+  cursor: pointer;
+}
+
+div.pm-media {
+  transition: 0.3s;
+}
+
+div.pm-media.selected {
+  opacity: 0.5;
+}/*# sourceMappingURL=empty_check.css.map */

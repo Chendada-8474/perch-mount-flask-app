@@ -7,11 +7,12 @@
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
         <h3 class="h3">{{perch_mount_name}} {{ check_date }}</h3>
     </div>
+
     <div class="shadow-sm bg-light p-3 rounded-2">
 
 
         <div id="load" class="text-center">
-            <p class="text-secondary">正在讀取{{perch_mount_name}} {{ check_date }} 的資料...</p>
+            <p class="text-secondary">正在讀取資料並下載所需要的照片...</p>
             <div class="spinner-border text-primary" role="status">
                 <span class="visually-hidden">Loading...</span>
             </div>
@@ -19,31 +20,14 @@
 
 
         <div id="contents">
-            <div class="row row-cols-1 row-cols-md-2 g-4">
-                {% for index, row in occurrences.iterrows() %}
-                <div class="col">
-                    <div class="card">
-                        <img src="{{ url_for('static', filename='img/%s' % row['path'])}}" class="card-img-top" alt="">
-                        <div class="card-body">
-                            <h5 class="card-title">Card title</h5>
-                            <p class="card-text">This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
 
-
-            {% for index, row in occurrences.iterrows() %}
-            <p>{{ row["path"] }}</p>
-            {% endfor %}
         </div>
     </div>
 
 </main>
+<p id="medium_info" hidden>{{ occurrences | tojson }}</p>
 
 <script src="{{ url_for('static', filename='js/review.js')}}"></script>
-
 <script>
     document.onreadystatechange = function () {
         var state = document.readyState
@@ -58,6 +42,7 @@
         }
     }
 </script>
+
 
 
 {% endblock %}
