@@ -91,8 +91,8 @@ class PMOccurrences:
 
     def _add_path(self):
         for object_id in self.occurrence.keys():
-            # self.occurrence[object_id]["path"] = get_path_by_object_id(object_id)
-            self.occurrence[object_id]["path"] = "img/img004.jpg"
+            self.occurrence[object_id]["path"] = get_path_by_object_id(object_id)
+            # self.occurrence[object_id]["path"] = "img/img004.jpg"
 
     def _add_common_name(self, taxon_order_by="ai", lang="chinese"):
         name_col_name = "%s_common_name" % lang
@@ -123,9 +123,8 @@ class PMRawMedia:
 
     def _add_path(self):
         for medium in self.raw_media:
-            # medium["path"] = get_path_by_object_id(medium["object_id"])
-            medium["path"] = "img/img004.jpg"
-        return
+            medium["path"] = get_path_by_object_id(medium["object_id"])
+            # medium["path"] = "img/img004.jpg"
 
 
 if __name__ == "__main__":

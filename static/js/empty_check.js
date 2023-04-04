@@ -37,7 +37,8 @@ document.addEventListener("DOMContentLoaded", () => {
     for (var i = 0; i < media.length; i++) {
         var img = media[i].getElementsByTagName("img")[0]
         img.addEventListener("click", mediumClick)
-        img.src = `/static/${rawMedia[i]["path"]}`
+        var url = rawMedia[i]["path"].replaceAll("\\", "/").replaceAll("#", "%23").substring(2)
+        img.src = `/uploads/${url}`
     }
 
     function mediumClick(event) {

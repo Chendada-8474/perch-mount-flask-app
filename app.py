@@ -124,9 +124,13 @@ def species_perdiction():
 
 @app.route("/uploads/<path:path>")
 def download_file(path):
+    print(path)
     path = Path(path)
     file_name = path.name
     dir_name = path.parent
+    dir_name = "//" + str(dir_name)
+    # file_name = "5a4613ac_高屏溪白茅草_20230211_115944.JPG"
+    # dir_name = "\\Birdlab-Nas\棲架資料\棲架資料庫\高屏溪白茅草\高屏溪白茅草_20230211_20230309"
     return send_from_directory(dir_name, file_name, as_attachment=True)
 
 
