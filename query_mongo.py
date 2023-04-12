@@ -24,6 +24,11 @@ def get_path_by_object_id(object_id: str):
     return path
 
 
+def delete_many_files_by_ids(object_ids: list):
+    for object_id in object_ids:
+        file_collection.delete_one({"_id": ObjectId(object_id)})
+
+
 if __name__ == "__main__":
     sp = look_up_species(11742)
     print(sp)

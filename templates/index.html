@@ -14,8 +14,8 @@
         <input id="perch_mount_name" type="text" class="form-control" list="perch_mount_datalist">
         <datalist id="perch_mount_datalist">
           {% for pm_name in perch_mount_names %}
-          <option value="{{ pm_name }}">
-            {% endfor %}
+          <option value="{{ pm_name }}"></option>
+          {% endfor %}
         </datalist>
       </div>
       <div class="mb-3">

@@ -2,15 +2,28 @@
 
 
 {% block content %}
-
+<link href="{{ url_for('static', filename='css/review.css')}}" rel="stylesheet">
 <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <h3 class="h3">{{perch_mount_name}} {{ check_date }}</h3>
+    <div
+        class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <div>
+            <h3 class="h3 mb-2">Review 物種</h3>
+            <h6>{{perch_mount_name}} {{ check_date }}</h6>
+        </div>
+        <div class="dropdown fixed-bottom">
+            <button id=" edit-selected" class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1"
+                data-bs-toggle="dropdown" aria-expanded="false">
+                編輯選取項目
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                <li><a class="dropdown-item" href="#">Action</a></li>
+                <li><a class="dropdown-item" href="#">Another action</a></li>
+                <li><a class="dropdown-item" href="#">Something else here</a></li>
+            </ul>
+        </div>
     </div>
 
     <div class="shadow-sm bg-light p-3 rounded-2">
-
-
         <div id="load" class="text-center">
             <p class="text-secondary">正在讀取資料並下載所需要的照片...</p>
             <div class="spinner-border text-primary" role="status">
@@ -18,15 +31,124 @@
             </div>
         </div>
 
-
         <div id="contents">
+
+            <div id="occurrences_container">
+
+                <div id="occurrence_template"
+                    class="shadow border-0 border border-primary m-3 p-3 d-flex align-items-center pm-occurrence">
+                    <input class="form-check-input me-1" type="checkbox" value="">
+                    <div>
+                        <img src="" class="rounded pm-image hover-pointer" alt="" style="width: 10rem;">
+                        <div class="text-end">
+                            <span class="text-secondary pm-heart hover-pointer" data-feather="heart"></span>
+                            <input type="checkbox" name="featured" hidden>
+                        </div>
+                    </div>
+
+                    <table class="table ms-2">
+                        <thead>
+                            <tr>
+                                <th scope="col">ai species</th>
+                                <th scope="col">species</th>
+                                <th scope="col">main behavior</th>
+                                <th scope="col">Secondary behavior</th>
+                                <th scope="col">prey</th>
+                                <th scope="col">adult</th>
+                                <th scope="col">tagged</th>
+                                <th scope="col">transmitter</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr id="individual">
+                                <td scope="row" class="ai_species"></td>
+                                <td>
+                                    <input list="species_list" type="text" name="common_ch_name"
+                                        class="form-control form-control-sm pm-review-species">
+                                </td>
+                                <td>
+                                    <select class="form-select form-select-sm" aria-label=".form-select-sm example"
+                                        name="main_behavior">
+                                        <option selected>--</option>
+                                        {% for behavior in behaviors %}
+                                        <option value="{{ behavior.behavior_id }}">{{ behavior.behavior_ch_name }}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                </td>
+                                <td>
+                                    <select class="form-select form-select-sm" aria-label=".form-select-sm example"
+                                        name="secondary_behavior">
+                                        <option selected>--</option>
+                                        {% for behavior in behaviors %}
+                                        <option value="{{ behavior.behavior_id }}">{{ behavior.behavior_ch_name }}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                </td>
+                                <td><input class="form-check-input" type="checkbox" value="" name="prey">
+                                </td>
+                                <td><input class="form-check-input" type="checkbox" value="" name="adult">
+                                </td>
+                                <td><input class="form-check-input" type="checkbox" value="" name="tagged">
+                                </td>
+                                <td><input class="form-check-input" type="checkbox" value="" name="transmitter">
+                                </td>
+                                <td hidden>
+                                    <input type="ragne" max="1" min="0" name="xmax" hidden>
+                                    <input type="ragne" max="1" min="0" name="xmin" hidden>
+                                    <input type="ragne" max="1" min="0" name="ymax" hidden>
+                                    <input type="ragne" max="1" min="0" name="ymin" hidden>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <input name="temp_select" type="checkbox" hidden>
+                </div>
+
+            </div>
 
         </div>
     </div>
 
-</main>
-<p id="medium_info" hidden>{{ occurrences | tojson }}</p>
+    <div id="pm-modal" class="position-fixed top-0 start-0 h-100 w-100">
+        <div id="pm-modal-content"
+            class="position-absolute top-50 start-50 h-75 w-75 translate-middle bg-light rounded shadow d-flex justify-content-between align-items-center">
 
+            <span id="close-pm-modal" class="position-absolute top-0 end-0 hover-pointer rounded m-1" data-feather="x"
+                class="m-1"></span>
+
+
+            <div id="next_medium" class="h-25 ps-2 pe-1 rounded hover-pointer d-flex align-items-center">
+                <span data-feather="chevron-left" class="text-secondary"></span>
+            </div>
+            <div id="pm-modal-panel row">
+                <div id="pm-modal-img-panel" class="col">
+                    <div>
+                        <img id="pm-modal-image" class="rounded" src="{{ url_for('static', filename='img/img004.jpg')}}"
+                            alt="" style="width: 35rem;">
+                    </div>
+                </div>
+                <div id="pm-modal-individual-panel" class="col"></div>
+            </div>
+            <div id="back_medium" class="h-25 ps-1 pe-2 rounded hover-pointer d-flex align-items-center">
+                <span data-feather="chevron-right" class="text-secondary"></span>
+            </div>
+
+        </div>
+    </div>
+
+
+</main>
+
+
+
+<p id="occurrence_info" hidden>{{ occurrences | tojson }}</p>
+
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
+<script src="//code.jquery.com/jquery-1.12.4.js"></script>
+<script src="//code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script src="{{ url_for('static', filename='js/review.js')}}"></script>
 <script>
     document.onreadystatechange = function () {
@@ -36,13 +158,12 @@
         } else if (state == 'complete') {
             setTimeout(function () {
                 document.getElementById('interactive');
-                document.getElementById('load').style.visibility = "hidden";
+                document.getElementById('load').style.display = "none";
                 document.getElementById('contents').style.visibility = "visible";
             }, 1000);
         }
     }
 </script>
-
 
 
 {% endblock %}

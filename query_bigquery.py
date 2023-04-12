@@ -1,6 +1,12 @@
-from google.cloud import bigquery
 from config import *
 from datetime import datetime
+from query_mysql import (
+    get_habitat_by_id,
+    get_projects_by_id,
+    get_projects_by_id,
+    get_id_by_perch_mount_name,
+)
+from google.cloud import bigquery
 import pandas as pd
 import os
 
@@ -11,7 +17,6 @@ client = bigquery.Client()
 
 
 def get_section_condition(perch_mount_name, check_date):
-
     query = f"""
     SELECT start_time, end_time
     FROM `{SECTION_TABLE_NAME}`
@@ -61,6 +66,51 @@ def get_unempty_check_occurrence_by_section(perch_mount_name, start_time, end_ti
     """
 
     return client.query(query)
+
+
+def insert_not_empty_media(raw_media):
+    errors = client.insert_rows_json(OCCURRENCE_TABLE_NAME, raw_media)
+    return errors
+
+
+def insert_bq_perch_mount(perch_mount_form):
+    perch_mount_id = get_id_by_perch_mount_name(perch_mount_form.perch_mount_name.data)
+    habitat = get_habitat_by_id(perch_mount_form.habitat_id.data)
+    project_names = [
+        project.project_name
+        for project in get_projects_by_id(perch_mount_form.project_id.data)
+    ]
+    row = [
+        {
+            "perch_mount_name": perch_mount_form.perch_mount_name.data,
+            "perch_mount_id": perch_mount_id,
+            "latitude": perch_mount_form.latitude.data,
+            "longitude": perch_mount_form.longitude.data,
+            "longitude": perch_mount_form.longitude.data,
+            "habitat_ch": habitat.habitat_ch_name,
+            "habitat_eng": habitat.habitat_eng_name,
+            "project": project_names,
+            "note": perch_mount_form.note.data,
+        }
+    ]
+    print(row)
+    # client.insert_rows_json(PERCH_MOUNT_TABLE_NAME, row)
+    return
+
+
+def delete_raw_media_by_ids(object_ids):
+    n = len(object_ids)
+    object_ids = tuple(object_ids)
+    if not n:
+        return
+    elif n == 1:
+        object_ids = str(object_ids).replace(",", "")
+    statement = f"""
+    DELETE FROM `{RAW_MEDIA_TABLE_NAME}`
+    WHERE object_id IN {object_ids};
+    """
+    query_job = client.query(statement)
+    query_job.result()
 
 
 if __name__ == "__main__":

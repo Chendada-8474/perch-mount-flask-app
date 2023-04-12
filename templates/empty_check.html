@@ -43,7 +43,8 @@
                     <form action="/empty_check_done" method="POST">
                         <input value="{{ perch_mount_name }}" name="perch_mount_name" type="text" hidden>
                         <input value="{{ check_date }}" name="check_date" type="text" hidden>
-                        <button name="checked_data" onclick="send_check_data()" value="" id="send" class="btn btn-primary">送出</button>
+                        <button name="checked_data" onclick="send_check_data()" value="" id="send"
+                            class="btn btn-primary">送出</button>
                     </form>
                 </div>
             </div>
@@ -51,7 +52,8 @@
     </div>
 
     <!-- Modal -->
-    <div class="modal modal-xl modal-dialog-scrollable fade" id="false_nagetve_modal" tabindex="-1" aria-labelledby="falseNagetveModalLabel" aria-hidden="true">
+    <div class="modal modal-xl modal-dialog-scrollable fade" id="false_nagetve_modal" tabindex="-1"
+        aria-labelledby="falseNagetveModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -70,17 +72,24 @@
     </div>
 
 
-    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <h3 class="h3">{{perch_mount_name}} {{ check_date }}</h3>
+    <div
+        class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
         <div>
-            <button type="button" class="btn btn-primary position-relative mx-2" data-bs-toggle="modal" data-bs-target="#false_nagetve_modal">
+            <h3 class="h3 mb-2">空拍檢查</h3>
+            <h6>{{perch_mount_name}} {{ check_date }}</h6>
+        </div>
+        <div>
+            <button type="button" class="btn btn-primary position-relative mx-2" data-bs-toggle="modal"
+                data-bs-target="#false_nagetve_modal">
                 <span data-feather="shopping-cart" class="align-text-bottom"></span>
-                <span id="num_checked" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
+                <span id="num_checked"
+                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
                 選取清單
             </button>
 
             <div class="btn-group mx-2">
-                <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown"
+                    aria-expanded="false">
                     <span data-feather="more-vertical" class="align-text-bottom"></span>
                 </button>
                 <ul class="dropdown-menu">
@@ -95,7 +104,8 @@
                     <li>
                         <hr class="dropdown-divider">
                     </li>
-                    <button class="dropdown-item bg-success text-white rounded" data-bs-toggle="modal" data-bs-target="#send_modal">
+                    <button class="dropdown-item bg-success text-white rounded" data-bs-toggle="modal"
+                        data-bs-target="#send_modal">
                         <span data-feather="send" class="align-text-bottom"></span>
                         確認送出資料變更
                     </button>
@@ -118,15 +128,19 @@
 
             <div id="media_container" class="d-flex flex-wrap">
 
-                <div id="medium_template" class="card shadow border-0 border border-primary m-3 d-flex align-items-center p-3 pm-media" style="width: 20rem;">
+                <div id="medium_template"
+                    class="card shadow border-0 border border-primary m-3 d-flex align-items-center p-3 pm-media"
+                    style="width: 20rem;">
                     <img src="" class="card-img-top" alt="...">
                     <p class="m-1">medium index</p>
                     <input name="temp_select" type="checkbox" hidden>
                     <input name="false_nagetve" type="checkbox" hidden>
                 </div>
+
             </div>
 
-            <button id="add_to_false_negative" type="button" class="btn btn-primary m-3" style="position: fixed; bottom: 0px; right: 0px;">
+            <button id="add_to_false_negative" type="button" class="btn btn-primary m-3"
+                style="position: fixed; bottom: 0px; right: 0px;">
                 <span data-feather="plus-circle" class="align-text-bottom"></span>
                 加入清單
             </button>

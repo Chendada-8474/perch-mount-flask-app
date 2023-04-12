@@ -2,6 +2,8 @@ var mediaDiv = document.getElementById("media_container")
 var falseNegativeDiv = document.getElementById("fn_container")
 var rawMedia = JSON.parse(document.getElementById("medium_info").textContent);
 var mediumTemplate = document.getElementById("medium_template").cloneNode(true)
+mediumTemplate.removeAttribute("id")
+
 var contentsDiv = document.getElementById("contents")
 
 var imgSizeRange = document.getElementById("img_size_range")
@@ -11,24 +13,18 @@ var clearSelection = document.getElementById("clear_selection")
 var addToFalseNegative = document.getElementById("add_to_false_negative")
 var cancelChecked = document.getElementById("cancel_checked")
 
-
 var numChecked = document.getElementById("num_checked")
 
 var lastCheckId = null
 document.getElementById("medium_template").remove();
 
-
 document.addEventListener("DOMContentLoaded", () => {
 
     for (var i = 0; i < rawMedia.length; i++) {
         var new_medium = mediumTemplate.cloneNode(true)
-        var medium_img = new_medium.getElementsByTagName("img")
         var medium_index = new_medium.getElementsByTagName("p")[0]
-        // var img_url = `{{ url_for('static', filename='${rawMedia[i]["path"]}')}}`
 
         new_medium.setAttribute("id", rawMedia[i]["object_id"])
-        // medium_img.src = img_url
-        // medium_img.src = "img/img004.jpg"
         medium_index.innerText = `${i + 1}/${rawMedia.length}`
         mediaDiv.appendChild(new_medium)
     }
@@ -174,31 +170,24 @@ function moveBackMedia(mediaId) {
 }
 
 function send_check_data() {
-    var falseNagetiveIds = []
+    var falseNagetiveIds = new Set()
     var emptyIds = []
+    var notEmptyRawMedia = []
     for (medium of falseNegativeDiv.children) {
-        falseNagetiveIds.push(medium.id)
+        falseNagetiveIds.add(medium.id)
     }
     for (medium of mediaDiv.children) {
         emptyIds.push(medium.id)
     }
-    data = { "fn_object_id": falseNagetiveIds, "empty_object_id": emptyIds }
-    console.log(data)
+    for (var i = 0; i < rawMedia.length; i++) {
+        if (falseNagetiveIds.has(rawMedia[i]["object_id"])) {
+            delete rawMedia[i].path
+            delete rawMedia[i].detected_date
+            delete rawMedia[i].file_issue
+            notEmptyRawMedia.push(rawMedia[i])
+        }
+    }
+
+    data = { "fn_object_data": notEmptyRawMedia, "empty_object_id": emptyIds }
     document.getElementById("send").value = JSON.stringify(data)
 }
-
-
-// var r = new XMLHttpRequest();
-// r.open("POST", "/_species_prediction", true);
-// r.onreadystatechange = function () {
-//     if (r.readyState != 4 || r.status != 200) return;
-//     alert("Success: " + r.responseText);
-// };
-// r.send("banana=yellow");
-
-// var content = document.getElementById("contents")
-
-
-
-
-

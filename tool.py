@@ -1,7 +1,7 @@
-import pandas as pd
-from config import *
-from collections import defaultdict
 import datetime
+import shutil
+from pathlib import Path
+from config import *
 from query_mongo import get_all_species, look_up_species, get_path_by_object_id
 
 
@@ -92,7 +92,6 @@ class PMOccurrences:
     def _add_path(self):
         for object_id in self.occurrence.keys():
             self.occurrence[object_id]["path"] = get_path_by_object_id(object_id)
-            # self.occurrence[object_id]["path"] = "img/img004.jpg"
 
     def _add_common_name(self, taxon_order_by="ai", lang="chinese"):
         name_col_name = "%s_common_name" % lang
@@ -119,12 +118,27 @@ class PMRawMedia:
         return self.raw_media[index]
 
     def _init_pm_raw_media(self, bq_raw_media):
-        return [dict(row) for row in bq_raw_media]
+        rows = []
+        for row in bq_raw_media:
+            row = dict(row)
+            row["medium_date"] = row["medium_date"].strftime(DATE_FROMAT)
+            row["medium_datetime"] = row["medium_datetime"].strftime(DATETIME_FROMAT)
+            rows.append(row)
+        return rows
 
     def _add_path(self):
         for medium in self.raw_media:
             medium["path"] = get_path_by_object_id(medium["object_id"])
-            # medium["path"] = "img/img004.jpg"
+
+
+def move_file_to_empty_dir_by_ids(object_ids: list):
+    for object_id in object_ids:
+        ori_path = get_path_by_object_id(object_id)
+        des_dir = Path(EMPTY_DES_DIR)
+        ori_path = Path(ori_path)
+        des_dir.mkdir(parents=True, exist_ok=True)
+        file_name = ori_path.name
+        shutil.move(ori_path, des_dir / file_name)
 
 
 if __name__ == "__main__":

@@ -1,29 +1,33 @@
-from config import *
 from pathlib import Path
-from datetime import datetime, timezone, date
-from tool import SpeciesTrie, PMOccurrences, PMRawMedia
-from form import SectionSelectForm
-from query_mysql import get_perch_mount_names
-from flask import Flask, render_template, send_from_directory, jsonify, request
-from query_mongo import get_all_species, get_path_by_object_id
-from query_bigquery import (
-    get_occurrence_by_section,
-    get_section_condition,
-    get_unempty_check_occurrence_by_section,
+from form import (
+    SectionSelectForm,
+    MemberFrom,
+    CameraForm,
+    BehaviorFrom,
+    PreyForm,
+    PerchMountForm,
 )
 
-import pandas as pd
+from datetime import datetime, timezone, date
+
+from tool import SpeciesTrie, PMOccurrences, PMRawMedia, move_file_to_empty_dir_by_ids
+from config import *
+from flask import Flask, render_template, send_from_directory, jsonify, request
 import json
+import pandas as pd
+import query_bigquery
+import query_mysql
+import query_mongo
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "key"
-species_trie = SpeciesTrie(get_all_species())
+species_trie = SpeciesTrie(query_mongo.get_all_species())
 
 
 @app.route("/", methods=["GET", "POST"])
 def index():
     section_select_form = SectionSelectForm()
-    perch_mount_names = get_perch_mount_names()
+    perch_mount_names = query_mysql.get_perch_mount_names()
 
     return render_template(
         "index.html",
@@ -34,7 +38,9 @@ def index():
 
 @app.route("/empty_check/<string:perch_mount_name>/<string:check_date>")
 def empty_check(perch_mount_name, check_date):
-    start_time, end_time = get_section_condition(perch_mount_name, check_date)
+    start_time, end_time = query_bigquery.get_section_condition(
+        perch_mount_name, check_date
+    )
 
     if not start_time or not end_time:
         return render_template(
@@ -42,14 +48,20 @@ def empty_check(perch_mount_name, check_date):
             perch_mount_name=perch_mount_name,
             check_date=check_date,
         )
-    raw_media = get_unempty_check_occurrence_by_section(
+    raw_media = query_bigquery.get_unempty_check_occurrence_by_section(
         perch_mount_name,
         start_time,
         end_time,
     )
 
     raw_media = PMRawMedia(raw_media)
-    # print(raw_media.raw_media)
+
+    if len(raw_media.raw_media) == 0:
+        return render_template(
+            "empty_check_done.html",
+            perch_mount_name=perch_mount_name,
+            check_date=check_date,
+        )
 
     return render_template(
         "empty_check.html",
@@ -69,7 +81,22 @@ def empty_check_done():
         data = json.loads(data)
         perch_mount_name = request.form["perch_mount_name"]
         check_date = request.form["check_date"]
-        print(data, perch_mount_name, check_date)
+
+        all_object_ids = [object_id for object_id in data["empty_object_id"]]
+        for row in data["fn_object_data"]:
+            all_object_ids.append(row["object_id"])
+
+        errors = query_bigquery.insert_not_empty_media(data["fn_object_data"])
+        if errors:
+            return render_template("error.html", errors=errors)
+
+        try:
+            query_bigquery.delete_raw_media_by_ids(all_object_ids)
+            move_file_to_empty_dir_by_ids(data["empty_object_id"])
+            # query_mongo.delete_many_files_by_ids(data["empty_object_id"])
+        except Exception as e:
+            return render_template("error.html", errors=e)
+
     return render_template(
         "empty_check_done.html",
         perch_mount_name=perch_mount_name,
@@ -79,8 +106,9 @@ def empty_check_done():
 
 @app.route("/review/<string:perch_mount_name>/<string:check_date>")
 def review(perch_mount_name, check_date):
-    global species_trie
-    # start_time, end_time = get_section_condition(perch_mount_name, check_date)
+    # start_time, end_time = query_bigquery.get_section_condition(
+    #     perch_mount_name, check_date
+    # )
     # if not start_time or not end_time:
     #     return render_template(
     #         "perch_mount_not_found.html",
@@ -88,38 +116,23 @@ def review(perch_mount_name, check_date):
     #         check_date=check_date,
     #     )
 
-    # occurrences = get_occurrence_by_section(perch_mount_name, start_time, end_time)
+    # occurrences = query_bigquery.get_occurrence_by_section(
+    #     perch_mount_name, start_time, end_time
+    # )
     # start_time = datetime.strptime("2022-03-31 15:45:00", DATETIME_FROMAT)
     # end_time = datetime.strptime("2022-04-09 13:54:00", DATETIME_FROMAT)
-    # occurrences = get_occurrence_by_section("土庫南側", start_time, end_time)
+    # occurrences = query_bigquery.get_occurrence_by_section("土庫南側", start_time, end_time)
     # occurrences = PMOccurrences(occurrences)
 
-    # occurrences[
-    #     "path"
-    # ] = "https://github.com/Chendada-8474/DetectiveKite/blob/main/sample/img004.jpg?raw=true"
-    # occurrences["path"] = occurrences.apply(
-    #     lambda df: get_path_by_object_id(df["object_id"]), axis=1
-    # )
-    species_trie = SpeciesTrie(get_all_species())
-    test = {
-        1: {"individual": ["Light-vented Bulbul", "Black-winged Kite"]},
-        2: {"individual": ["Black-winged Kite"]},
-        3: {"individual": ["Grey Treepie"]},
-    }
+    behaviors = query_mysql.get_behaviors()
 
     return render_template(
         "review.html",
         perch_mount_name=perch_mount_name,
         check_date=check_date,
-        occurrences=test,
+        behaviors=behaviors,
+        occurrences=occurrences,
     )
-
-
-@app.route("/_species_prediction", methods=["GET", "POST"])
-def species_perdiction():
-    word = request.form.get("species-input")
-    results = species_trie.search(word)
-    return jsonify(results)
 
 
 @app.route("/uploads/<path:path>")
@@ -129,9 +142,76 @@ def download_file(path):
     file_name = path.name
     dir_name = path.parent
     dir_name = "//" + str(dir_name)
-    # file_name = "5a4613ac_高屏溪白茅草_20230211_115944.JPG"
-    # dir_name = "\\Birdlab-Nas\棲架資料\棲架資料庫\高屏溪白茅草\高屏溪白茅草_20230211_20230309"
     return send_from_directory(dir_name, file_name, as_attachment=True)
+
+
+@app.route("/perch_mount", methods=["GET", "POST"])
+def perch_mount():
+    perch_mount_form = PerchMountForm()
+
+    if perch_mount_form.validate_on_submit():
+        query_bigquery.insert_bq_perch_mount(perch_mount_form)
+        pass
+
+    perch_mounts = query_mysql.get_perch_mounts()
+    return render_template(
+        "perch_mount.html",
+        perch_mounts=perch_mounts,
+        perch_mount_form=perch_mount_form,
+    )
+
+
+@app.route("/member", methods=["GET", "POST"])
+def member():
+    member_form = MemberFrom()
+    if member_form.validate_on_submit():
+        query_mysql.insert_member(member_form)
+
+    members = query_mysql.get_members()
+    return render_template("member.html", members=members, member_form=member_form)
+
+
+@app.route("/prey", methods=["GET", "POST"])
+def prey():
+    prey_form = PreyForm()
+    if prey_form.validate_on_submit():
+        query_mysql.insert_prey(prey_form)
+
+    preys = query_mysql.get_preys()
+    return render_template("prey.html", preys=preys, prey_form=prey_form)
+
+
+@app.route("/camera", methods=["GET", "POST"])
+def camera():
+    camera_form = CameraForm()
+    if camera_form.validate_on_submit():
+        query_mysql.insert_camera(camera_form)
+    cameras = query_mysql.get_cameras()
+    return render_template("camera.html", cameras=cameras, camera_form=camera_form)
+
+
+@app.route("/behavior", methods=["GET", "POST"])
+def behavior():
+    behavior_form = BehaviorFrom()
+    if behavior_form.validate_on_submit():
+        query_mysql.insert_behavior(behavior_form)
+
+    behaviors = query_mysql.get_behaviors()
+    return render_template(
+        "behavior.html",
+        behaviors=behaviors,
+        behavior_form=behavior_form,
+    )
+
+
+@app.route("/species_input_predict", methods=["POST", "GET"])
+def species_input_predict():
+    phrase = request.get_data(as_text=True)
+    predictions = species_trie.search(phrase) if phrase else []
+    predictions = [
+        [p[1], p[2]] for p in sorted(predictions, reverse=True, key=lambda x: x[0])
+    ]
+    return jsonify(predictions)
 
 
 if __name__ == "__main__":
