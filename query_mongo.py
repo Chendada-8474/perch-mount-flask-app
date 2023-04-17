@@ -9,8 +9,8 @@ species_collection = database["species"]
 file_collection = database["file"]
 
 
-def get_all_species():
-    all_species = species_collection.find({})
+def get_all_species(field={}):
+    all_species = species_collection.find({}, field)
     return all_species
 
 
@@ -30,5 +30,8 @@ def delete_many_files_by_ids(object_ids: list):
 
 
 if __name__ == "__main__":
-    sp = look_up_species(11742)
-    print(sp)
+    sp = get_all_species(
+        field=["chinese_common_name", "english_common_name", "taxon_order"]
+    )
+    for s in sp:
+        print(s)

@@ -29,7 +29,14 @@ INDIVIDUAL_COL_NAME = (
     "featured",
 )
 
-MEDIUM_COL_NAME = ("medium_datetime", "medium_date", "object_id")
+MEDIUM_COL_NAME = (
+    "medium_datetime",
+    "medium_date",
+    "object_id",
+    "featured",
+    "perch_mount_id",
+    "perch_mount_name",
+)
 
 
 from datetime import datetime, timezone, date
@@ -580,7 +587,7 @@ occurrences = {
                 "ymin": 0.3031,
                 "ymax": 0.7617,
                 "featured": None,
-                "chinese_common_name_ai": "黑 翅鳶",
+                "chinese_common_name_ai": "黑翅鳶",
                 "chinese_common_name_human": None,
             }
         ],
@@ -928,7 +935,7 @@ occurrences = {
                 "ymin": None,
                 "ymax": None,
                 "featured": None,
-                "chinese_common_name_ai": "黑 翅鳶",
+                "chinese_common_name_ai": "黑翅鳶",
                 "chinese_common_name_human": None,
             }
         ],

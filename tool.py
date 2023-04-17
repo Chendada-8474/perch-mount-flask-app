@@ -131,6 +131,29 @@ class PMRawMedia:
             medium["path"] = get_path_by_object_id(medium["object_id"])
 
 
+class CommonNameChecker:
+    def __init__(self, all_species):
+        self.all_species = all_species
+        self.from_ch = self._name_to_taxon_order("chinese_common_name")
+        self.from_eng = self._name_to_taxon_order("english_common_name")
+
+    def _name_to_taxon_order(self, field):
+        return {species[field]: species["taxon_order"] for species in self.all_species}
+
+    def check_common_name(self, common_name, lang="ch"):
+        return (
+            common_name in self.from_ch
+            if lang == "ch"
+            else common_name in self.from_eng
+        )
+
+    def query_taxon_order(self, common_name, lang="ch"):
+        if lang == "ch":
+            return self.from_ch[common_name]
+        elif lang == "eng":
+            return self.from_eng[common_name]
+
+
 def move_file_to_empty_dir_by_ids(object_ids: list):
     for object_id in object_ids:
         ori_path = get_path_by_object_id(object_id)
@@ -142,33 +165,12 @@ def move_file_to_empty_dir_by_ids(object_ids: list):
 
 
 if __name__ == "__main__":
-    test = PMOccurrences({})
-    print(
-        test._extract_individual_info(
-            {
-                "taxon_order_by_ai": 7575,
-                "taxon_order_by_human": None,
-                "medium_datetime": datetime.datetime(
-                    2022, 4, 8, 13, 39, 30, tzinfo=datetime.timezone.utc
-                ),
-                "medium_date": datetime.date(2022, 4, 8),
-                "perch_mount_id": 3,
-                "perch_mount_name": "土庫南側",
-                "main_behavior_ch": None,
-                "main_behavior_eng": None,
-                "secondary_behavior_ch": None,
-                "secondary_behavior_eng": None,
-                "prey_ch": None,
-                "prey_eng": None,
-                "adult": None,
-                "tagged": None,
-                "transmitter": None,
-                "xmin": 0.1822,
-                "xmax": 0.5762,
-                "ymin": 0.3799,
-                "ymax": 0.825,
-                "featured": None,
-                "object_id": "64168e9a697b9520481d2bd2",
-            }
-        )
-    )
+    species = get_all_species()
+    converter = CommonNameChecker(species)
+    print(converter.check_common_name("黑面琵鷺"))
+    print(converter.check_common_name("白頭翁"))
+    print(converter.check_common_name("家八哥"))
+    # for s in converter.from_ch:
+    #     print(s)
+
+    pass

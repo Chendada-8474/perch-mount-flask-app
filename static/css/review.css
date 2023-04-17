@@ -1,14 +1,26 @@
+.ui-front {
+  z-index: 10000 !important;
+}
+
+.pm-image:hover {
+  transform: scale(1.02);
+}
+
+.pm-image {
+  transition: 0.1s;
+}
+
 #pm-modal {
   display: none;
-  z-index: 9999;
+  z-index: 100;
   background-color: rgba(0, 0, 0, 0.4);
 }
 
-#back_medium:hover, #next_medium:hover {
+#back-medium:hover, #next-medium:hover {
   background-color: rgba(0, 0, 0, 0.1);
 }
 
-#back_medium, #next_medium {
+#back-medium, #next-medium {
   transition: 0.1s;
 }
 
@@ -23,4 +35,19 @@
 
 .hover-pointer:hover {
   cursor: pointer;
+}
+
+.delete-individual {
+  color: #dc3545;
+  transition: 0.1s;
+}
+
+.delete-individual:hover {
+  background-color: #dc3545;
+  color: white;
+}
+
+#bounding-box-painter {
+  cursor: crosshair;
+  background-color: rgba(255, 255, 255, 0);
 }/*# sourceMappingURL=review.css.map */
