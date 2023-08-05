@@ -18,23 +18,44 @@ var numChecked = document.getElementById("num_checked")
 var lastCheckId = null
 document.getElementById("medium_template").remove();
 
+
 document.addEventListener("DOMContentLoaded", () => {
+    var media = mediaDiv.getElementsByClassName("pm-media")
+
+    if (getCookieByName("empty_check_img_size")) {
+        var img_size = getCookieByName("empty_check_img_size");
+    } else {
+        var img_size = "20rem"
+    }
 
     for (var i = 0; i < rawMedia.length; i++) {
         var new_medium = mediumTemplate.cloneNode(true)
         var medium_index = new_medium.getElementsByTagName("p")[0]
 
         new_medium.setAttribute("id", rawMedia[i]["object_id"])
+        new_medium.style.width = img_size;
         medium_index.innerText = `${i + 1}/${rawMedia.length}`
         mediaDiv.appendChild(new_medium)
     }
 
-    var media = mediaDiv.getElementsByClassName("pm-media")
     for (var i = 0; i < media.length; i++) {
-        var img = media[i].getElementsByTagName("img")[0]
-        img.addEventListener("click", mediumClick)
-        var url = rawMedia[i]["path"].replaceAll("\\", "/").replaceAll("#", "%23").substring(2)
-        img.src = `/uploads/${url}`
+        // var url = rawMedia[i]["path"].replaceAll("\\", "/").replaceAll("#", "%23").substring(2)
+        var url = rawMedia[i]["path"]
+        let s = url.split(".")
+        var ext = s[s.length - 1].toLowerCase()
+        if (ext == "jpg" || ext == "jpeg") {
+            var img = media[i].querySelector("img")
+            var video = media[i].querySelector("video")
+            img.addEventListener("click", mediumClick)
+            img.src = `/uploads/${url}`
+            video.remove()
+        } else {
+            var img = media[i].querySelector("img")
+            var video = media[i].querySelector("video")
+            video.addEventListener("click", mediumClick)
+            video.src = `/uploads/${url}`
+            img.remove()
+        }
     }
 
     function mediumClick(event) {
@@ -86,6 +107,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     savePreffence.addEventListener("click", function (event) {
         var imgSize = imgSizeRange.value
+        document.cookie = `empty_check_img_size=${imgSize}rem`
         for (var i = 0; i < media.length; i++) {
             media[i].style.width = `${imgSize}rem`
         }
@@ -119,6 +141,12 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         numChecked.innerText = falseNegativeDiv.childElementCount
     })
+
+    for (let bt of document.getElementsByClassName("back-to-top")) {
+        bt.addEventListener("click", event => {
+            window.scrollTo(0, 0)
+        })
+    }
 
 })
 
@@ -156,7 +184,7 @@ function changeStateChange(medium, checked) {
 function moveMediaToFN(mediaId) {
     var moveMedium = document.getElementById(mediaId)
     falseNegativeDiv.prepend(moveMedium)
-    moveMedium.style.width = "10rem"
+    moveMedium.style.width = "15rem"
     moveMedium.querySelector("input[name='temp_select']").checked = false
     changeStateChange(moveMedium, false)
 }
@@ -190,4 +218,12 @@ function send_check_data() {
 
     data = { "fn_object_data": notEmptyRawMedia, "empty_object_id": emptyIds }
     document.getElementById("send").value = JSON.stringify(data)
+}
+
+
+function getCookieByName(name) {
+    return document.cookie
+        .split("; ")
+        .find((row) => row.startsWith(`${name}=`))
+        ?.split("=")[1];
 }

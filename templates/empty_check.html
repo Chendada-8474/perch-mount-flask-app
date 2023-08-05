@@ -4,7 +4,6 @@
 {% block content %}
 
 <link href="{{ url_for('static', filename='css/empty_check.css')}}" rel="stylesheet">
-
 <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
 
     <!-- Modal -->
@@ -20,36 +19,14 @@
                     <input type="range" class="form-range" min="10" max="30" id="img_size_range" value="20">
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button id="save_preffence" type="button" class="btn btn-primary">Save changes</button>
+                    <button id="save_preffence" class="btn btn-primary">
+                        儲存設定
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Modal -->
-    <div class="modal fade" id="send_modal" tabindex="-1" aria-labelledby="sendModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="sendModalLabel">請再次確認</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    確認要送出了嗎？此動作會直接更該資料庫的內容，請完全確認檢查完畢後再送出。
-                </div>
-                <div class="modal-footer">
-                    <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <form action="/empty_check_done" method="POST">
-                        <input value="{{ perch_mount_name }}" name="perch_mount_name" type="text" hidden>
-                        <input value="{{ check_date }}" name="check_date" type="text" hidden>
-                        <button name="checked_data" onclick="send_check_data()" value="" id="send"
-                            class="btn btn-primary">送出</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <!-- Modal -->
     <div class="modal modal-xl modal-dialog-scrollable fade" id="false_nagetve_modal" tabindex="-1"
@@ -63,9 +40,19 @@
                 <div id="fn_container" class="modal-body bg-light d-flex flex-wrap">
 
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button id="cancel_checked" type="button" class="btn btn-primary">取消選取</button>
+                <div class="modal-footer d-flex flex-wrap justify-content-between">
+                    <form action="/empty_check_done" method="POST">
+                        <input value="{{ current_user.id }}" name="empty_checker" type="text" hidden>
+                        <input value="{{ perch_mount_name }}" name="perch_mount_name" type="text" hidden>
+                        <input value="{{ check_date }}" name="check_date" type="text" hidden>
+                        <input value="{{ num_media }}" name="num_media" type="number" hidden>
+                        <button name="checked_data" onclick="send_check_data()" value="" id="send"
+                            class="btn btn-primary">送出</button>
+                    </form>
+                    <div>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button id="cancel_checked" type="button" class="btn btn-primary">取消選取</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -76,16 +63,10 @@
         class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
         <div>
             <h3 class="h3 mb-2">空拍檢查</h3>
-            <h6>{{perch_mount_name}} {{ check_date }}</h6>
+            <h6>{{perch_mount_name}} {{ start_datetime }} ~ {{ end_datetime }}</h6>
+            <small>選取<span class="fw-bold">不是</span>空拍的照片</small>
         </div>
         <div>
-            <button type="button" class="btn btn-primary position-relative mx-2" data-bs-toggle="modal"
-                data-bs-target="#false_nagetve_modal">
-                <span data-feather="shopping-cart" class="align-text-bottom"></span>
-                <span id="num_checked"
-                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
-                選取清單
-            </button>
 
             <div class="btn-group mx-2">
                 <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown"
@@ -101,15 +82,6 @@
                         <span data-feather="x" class="align-text-bottom"></span>
                         清除選取</a>
                     </li>
-                    <li>
-                        <hr class="dropdown-divider">
-                    </li>
-                    <button class="dropdown-item bg-success text-white rounded" data-bs-toggle="modal"
-                        data-bs-target="#send_modal">
-                        <span data-feather="send" class="align-text-bottom"></span>
-                        確認送出資料變更
-                    </button>
-
                 </ul>
             </div>
 
@@ -131,7 +103,8 @@
                 <div id="medium_template"
                     class="card shadow border-0 border border-primary m-3 d-flex align-items-center p-3 pm-media"
                     style="width: 20rem;">
-                    <img src="" class="card-img-top" alt="...">
+                    <img src="" class="card-img-top" alt="..." loading="lazy">
+                    <video src="" class="card-img-top" controls></video>
                     <p class="m-1">medium index</p>
                     <input name="temp_select" type="checkbox" hidden>
                     <input name="false_nagetve" type="checkbox" hidden>
@@ -139,19 +112,28 @@
 
             </div>
 
-            <button id="add_to_false_negative" type="button" class="btn btn-primary m-3"
-                style="position: fixed; bottom: 0px; right: 0px;">
+            <button id="add_to_false_negative" type="button" class="btn btn-primary my-5"
+                style="position: fixed; bottom: 50px; right: 10px;">
                 <span data-feather="plus-circle" class="align-text-bottom"></span>
                 加入清單
             </button>
 
         </div>
+        <div class="d-flex flex-row-reverse">
+            <button type="button" class="btn btn-primary position-relative mx-2" data-bs-toggle="modal"
+                data-bs-target="#false_nagetve_modal">
+                <span data-feather="shopping-cart" class="align-text-bottom"></span>
+                <span id="num_checked"
+                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
+                選取清單
+            </button>
+        </div>
+
     </div>
 
 </main>
 
-<p id="medium_info" hidden>{{ raw_media | tojson }}</p>
-
+<p id="medium_info" hidden>{{ empty_media | tojson }}</p>
 
 <script src="{{ url_for('static', filename='js/empty_check.js')}}"></script>
 <script>

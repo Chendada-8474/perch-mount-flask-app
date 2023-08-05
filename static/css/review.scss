@@ -38,6 +38,11 @@
     cursor: pointer;
 }
 
+
+.hover-zommin:hover {
+    cursor: zoom-in;
+}
+
 .delete-individual {
     color: #dc3545;
     transition: 0.1s;
@@ -53,6 +58,19 @@
     background-color: rgba(255, 255, 255, 0);
 }
 
+#full_screen_image {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-size: contain;
+    background-repeat: no-repeat no-repeat;
+    background-position: center center;
+    background-color: black;
+  }
 // #edit-selected {
 //     position: sticky;
 //     top: 10px;

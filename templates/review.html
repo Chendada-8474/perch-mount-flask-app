@@ -2,6 +2,7 @@
 
 
 {% block content %}
+
 <link href="{{ url_for('static', filename='css/review.css')}}" rel="stylesheet">
 <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
     <div
@@ -10,67 +11,220 @@
             <h3 class="h3 mb-2">Review 物種</h3>
             <h6>{{perch_mount_name}} {{ check_date }}</h6>
         </div>
+        <div>
+            <button class="btn btn-white" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample"
+                aria-controls="offcanvasExample">
+                <i data-feather="settings"></i>
+            </button>
 
-        <!-- Button trigger modal -->
-        <button type="button" class="btn btn-primary m-3 position-fixed bottom-0 end-0" data-bs-toggle="modal"
-            data-bs-target="#exampleModal">
-            變更選取項目
-        </button>
-
-        <!-- Modal -->
-        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">變更項目</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample"
+                aria-labelledby="offcanvasExampleLabel">
+                <div class="offcanvas-header">
+                    <h5 class="offcanvas-title" id="offcanvasExampleLabel">偏好設定</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body">
+                    <div>
+                        <label for="imageSizeRange" class="form-label">圖片大小</label>
+                        <input type="range" min=10 max=30 class="form-range" id="imageSizeRange" value=20>
                     </div>
-                    <div class="modal-body">
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit selected media infomation trigger -->
+        <button id="start_edit" class="btn btn-primary m-3 position-fixed bottom-0 end-0" type="button"
+            data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight"
+            style="z-index: 999;">變更選取項目</button>
+
+        <!-- editable attribute -->
+        <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title" id="offcanvasRightLabel">變更項目</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body">
+
+                <div id="updater" class="modal-body">
+
+                    <div class="m-2">
                         <label for="edit-species" class="form-label">物種</label>
                         <input id="edit-species" class="form-control form-control-sm mb-2" type="text">
-                        <label for="edit-main-behavior" class="form-label">主要行為</label>
-                        <select name="" id="edit-main-behavior" class="form-select form-select-sm mb-2">
-                            <option selected>--</option>
-                            {% for behavior in behaviors %}
-                            <option value="{{ behavior.behavior_id }}">{{ behavior.behavior_ch_name }}
-                            </option>
+                    </div>
+
+                    <div class="m-2">
+                        <label for="edit-ring-number" class="form-label">環號</label>
+                        <input id="edit-ring-number" class="form-control form-control-sm" type="text">
+                    </div>
+
+                    <div class="m-2">
+                        <label for="edit-event" class="form-label">意外事件</label>
+                        <select id="edit-event" class="form-select form-select-sm mb-2">
+                            <option value="">--</option>
+                            {% for event in events %}
+                            <option value="{{ event.event_id }}">{{ event.event_ch_name }}</option>
                             {% endfor %}
                         </select>
-                        <label for="edit-secondary-behavior" class="form-label">次要行為</label>
-                        <select name="" id="edit-secondary-behavior" class="form-select form-select-sm mb-2">
-                            <option selected>--</option>
-                            {% for behavior in behaviors %}
-                            <option value="{{ behavior.behavior_id }}">{{ behavior.behavior_ch_name }}
-                            </option>
-                            {% endfor %}
-                        </select>
-                        <div class="m-2">
-                            <input id="edit-prey" class="form-check-input" type="checkbox">
-                            <label for="edit-prey" class="form-check-label">獵物</label>
-                        </div>
-                        <div class="m-2">
-                            <input id="edit-adult" class="form-check-input" type="checkbox" checked>
-                            <label for="edit-adult" class="form-check-label">成鳥</label>
-                        </div>
-                        <div class="m-2">
-                            <input id="edit-tagged" class="form-check-input" type="checkbox">
-                            <label for="edit-tagged" class="form-check-label">標記</label>
-                        </div>
-                        <div class="m-2">
-                            <input id="edit-transmitter" class="form-check-input" type="checkbox">
-                            <label for="edit-transmitter" class="form-check-label">發報器</label>
-                        </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button id="confirm-edit" type="button" class="btn btn-primary">變更</button>
+
+                    <div class="m-2">
+                        <input id="edit-prey" class="form-check-input" type="checkbox">
+                        <label for="edit-prey" class="form-check-label">是否有獵物</label>
                     </div>
+
+                    <div class="m-2">
+                        <input id="edit-tagged" class="form-check-input" type="checkbox">
+                        <label for="edit-tagged" class="form-check-label">標記</label>
+                    </div>
+
+                </div>
+
+                <div class="mt-5">
+                    <button id="confirm-edit" type="button" class="btn btn-primary">變更</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="shadow-sm bg-light p-3 rounded-2">
+
+    <!-- editer Modal -->
+    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-fullscreen">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5 fw-bold" id="editModalLabel">Show file name here</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+
+
+                    <div class="row">
+                        <div class="col">
+
+                            <div id="boxing-container" class="position-relative">
+                                <div id="horizontal" class="position-absolute border-bottom border-light"></div>
+                                <div id="vertical" class="position-absolute border-end border-light"></div>
+                                <div id="bounding-box-painter" class="position-absolute" style="z-index: 9999;"></div>
+                                <img id="edit_modal_image" class="rounded" src="" alt=""
+                                    style="width: 800px; height:600px;">
+                            </div>
+
+                            <video aria-colcount="rounded" src="" class="rounded card-img-top" style="width:50rem;"
+                                controls></video>
+                        </div>
+                        <div class="col">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>AI 物種</th>
+                                        <th>物種</th>
+                                        <th>xmax</th>
+                                        <th>xmin</th>
+                                        <th>ymax</th>
+                                        <th>ymin</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="edit_modal_individuals">
+
+                                </tbody>
+                            </table>
+
+                            <button id="edit_add_individual" class="btn btn-primary btn-sm mt-3">
+                                <i data-feather="plus"></i> 新增個體
+                            </button>
+
+                            <!-- medium metadata -->
+                            <div class="mt-5" id="edit_modal_medium_infomation">
+                                <p class="fw-light text-secondary">
+                                    Object id: <span class="fw-light text-secondary" id="info_object_id"></span><br>
+                                    拍攝時間: <span class="fw-light text-secondary" id="info_medium_datetime"></span><br>
+                                    檔案名稱: <span class="fw-light text-secondary" id="info_file_name"></span><br>
+                                    檔案位置: <span class="fw-light text-secondary" id="info_path"></span><br>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- controler of image and video size -->
+                    <div class="row">
+                        <div class="col-4 flex-wrap d-flex">
+                            <p class="me-2">x: <span id="painter_x"></span></p>
+                            <p>y: <span id="painter_y"></span></p>
+                        </div>
+                        <!-- <div class="col-4">
+                            <label for="edit_modal_image_range" class="form-label">圖像尺寸</label>
+                            <input type="range" min="15" max="60" class="form-range" id="edit_modal_image_range"
+                                name="image_size" value="50">
+                        </div>
+                        <div class="col-8"></div> -->
+                    </div>
+
+                </div>
+                <!-- <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div> -->
+            </div>
+        </div>
+    </div>
+
+    <!-- feature Modal -->
+    <div class="modal fade" id="featureModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <input id="featuring_medium_id" type="text" hidden>
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">精選資訊</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="m-2">
+                        <label for="featured_behavior" class="form-label">行為</label>
+                        <select id="featured_behavior" class="form-select" name="behavior" id="">
+                            <option value="">--</option>
+                            {% for behavior in behaviors %}
+                            <option value="{{ behavior.behavior_ch_name }}">{{ behavior.behavior_ch_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="m-2">
+                        <label for="featured_title" class="form-label">精選標題</label>
+                        <input id="featured_title" class="form-control form-control-sm mb-2" type="text">
+                    </div>
+                    <div class="m-2">
+                        <label for="featured_description" class="form-label">描述</label>
+                        <textarea id="featured_description" class="form-control mb-2" rows="5"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="feature_save" type="button" class="btn btn-primary">
+                        <i data-feather="edit-3"></i> 儲存變更
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- full screen image -->
+    <div id="full_screen_image" onclick="this.style.display='none';"></div>
+
+    <div class="alert alert-warning">
+        檢查前請先確認好同學們有沒有在看跟你一樣的棲架喔！
+    </div>
+    <div class="alert alert-warning">
+        按shift可以一次選取多個檔案，再一起更改鳥種。
+    </div>
+    <div class="alert alert-warning">
+        若畫面沒鳥，但有其他需要保存畫面的情況，請選取事件。
+    </div>
+    <div class="alert alert-warning">
+        若確認有抓到獵物，即使獵物被身體擋住看不見，還是要勾選有獵物。
+    </div>
+
+    <div id="media-container" class="shadow-sm bg-light p-3 rounded-2">
         <div id="load" class="text-center">
             <p class="text-secondary">正在讀取資料並下載所需要的照片...</p>
             <div class="spinner-border text-primary" role="status">
@@ -78,197 +232,192 @@
             </div>
         </div>
 
-        <div id="contents">
-            <div id="occurrences_container">
-                <div id="occurrence_template"
-                    class="shadow border-0 border border-primary rounded m-3 p-3 d-flex align-items-center pm-occurrence border-primary">
+        <div id="contents" class="d-flex flex-wrap">
+            {% for medium in media %}
 
-                    <input class="pm-medium-selected form-check-input me-1" type="checkbox" value="" name="temp-select">
+            <!-- a medium -->
+            <div id="{{ medium.object_id }}" class="card shadow border-0 border border-primary m-3 d-flex p-3 pm-media"
+                style="width: 20rem;">
+                <input type="datetime" value="{{ medium.medium_datetime }}" name="medium_datetime" hidden>
+                <input type="text" value="{{ medium._path }}" name="path" hidden>
+                <input type="text" value="{{ medium.file_name }}" name="file_name" hidden>
+                {% if medium.is_image %}
+                <input type="checkbox" name="is_image" hidden checked>
+                {% else %}
+                <input type="checkbox" name="is_image" hidden>
+                {% endif %}
 
+                <!-- medium header -->
+                <div id="medium_header" class="media-header d-flex flex-wrap justify-content-between mb-1">
 
-                    <div>
-                        <small class="text-secondary mb-1"></small>
-                        <div>
-                            <img src="" class="rounded pm-image hover-pointer" alt="" style="width: 10rem;">
-                            <div class="text-end">
-                                <span class="text-secondary pm-heart hover-pointer" data-feather="heart"></span>
-                                <input type="checkbox" name="featured" hidden>
-                            </div>
-                        </div>
-                    </div>
+                    <input class="pm-medium-selected form-check-input m-1" type="checkbox" value="" name="temp-select">
 
-                    <table class="table ms-2">
-                        <thead>
-                            <tr>
-                                <th scope="col">AI 物種</th>
-                                <th scope="col">物種</th>
-                                <th scope="col">主要行為</th>
-                                <th scope="col">次要行為</th>
-                                <th scope="col">獵物</th>
-                                <th scope="col">成鳥</th>
-                                <th scope="col">標記</th>
-                                <th scope="col">發報器</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr id="individual">
-                                <td scope="row" class="ai_species"></td>
-                                <td>
-                                    <input list="species_list" type="text" name="common_ch_name"
-                                        class="form-control form-control-sm pm-review-species">
-                                </td>
-                                <td>
-                                    <select class="form-select form-select-sm" aria-label=".form-select-sm example"
-                                        name="main_behavior">
-                                        <option value="" selected>--</option>
-                                        {% for behavior in behaviors %}
-                                        <option value="{{ behavior.behavior_id }}">{{ behavior.behavior_ch_name }}
-                                        </option>
-                                        {% endfor %}
-                                    </select>
-                                </td>
-                                <td>
-                                    <select class="form-select form-select-sm" aria-label=".form-select-sm example"
-                                        name="secondary_behavior">
-                                        <option value="" selected>--</option>
-                                        {% for behavior in behaviors %}
-                                        <option value="{{ behavior.behavior_id }}">{{ behavior.behavior_ch_name }}
-                                        </option>
-                                        {% endfor %}
-                                    </select>
-                                </td>
-                                <td><input class="form-check-input" type="checkbox" value="" name="prey">
-                                </td>
-                                <td><input class="form-check-input" type="checkbox" value="" name="adult" checked>
-                                </td>
-                                <td><input class="form-check-input" type="checkbox" value="" name="tagged">
-                                </td>
-                                <td><input class="form-check-input" type="checkbox" value="" name="transmitter">
-                                </td>
-                                <td hidden>
-                                    <input type="ragne" max="1" min="0" name="xmax" hidden>
-                                    <input type="ragne" max="1" min="0" name="xmin" hidden>
-                                    <input type="ragne" max="1" min="0" name="ymax" hidden>
-                                    <input type="ragne" max="1" min="0" name="ymin" hidden>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+                    <div class="d-flex flex-wrap">
+                        <!-- featrue modal trigger modal -->
+                        <button type="button" class="btn btn-white btn-sm" data-bs-toggle="modal"
+                            data-bs-target="#featureModal" name="feature_open" value="{{ medium.object_id }}">
+                            <span class="text-secondary pm-heart hover-pointer" data-feather="heart"></span>
+                        </button>
+                        <input type="text" name="feature_title" hidden>
+                        <input type="text" name="feature_behavior" hidden>
+                        <input type="text" name="feature_description" hidden>
 
-            </div>
+                        <!-- editer modal trigger modal -->
+                        <button type="button" class="btn btn-white btn-sm" data-bs-toggle="modal"
+                            data-bs-target="#editModal" name="edit_modal_trigger">
+                            <span class="text-secondary hover-pointer" data-feather="edit"></span>
+                        </button>
 
-            <!-- Button trigger modal -->
-            <button id="open-confirm-modal" type="button" class="btn btn-success" data-bs-toggle="modal"
-                data-bs-target="#confirmModal">
-                <span data-feather="send" class="align-text-bottom"></span>
-                確認變更
-            </button>
-
-            <!-- Modal -->
-            <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel"
-                aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="confirmModalLabel">請再次確認</h1>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div id="confirm-model-body" class="modal-body">
-                            確認要送出了嗎？此動作會直接更該資料庫的內容，請完全確認檢查完畢後再送出。
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <form action="/review_done" method="POST">
-                                <button name="review_data" id="confirm-send-button" type="submit"
-                                    class="btn btn-primary" onclick="send_review()" value="">送出</button>
-                            </form>
-                        </div>
+                        <input type="checkbox" name="featured" hidden>
                     </div>
                 </div>
+
+
+                <!-- medium part -->
+                <div id="medium_picture_template">
+                    {% if medium.is_image %}
+                    <img src="/uploads/{{ medium.path }}" class="rounded pm-image hover-zommin card-img-top" alt=""
+                        loading="lazy">
+                    {% else %}
+                    <video src="/uploads/{{ medium.path }}" class="rounded card-img-top" controls></video>
+                    {% endif %}
+                </div>
+
+
+                <!-- species name -->
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>AI</th>
+                            <th>訂正</th>
+                            <th>獵物</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for individual in medium.individuals %}
+                        <tr id="{{ medium.object_id }}_indi_{{ loop.index }}" class="rounded">
+                            <td class="ai-species align-middle fw-bold fs-6">
+                                {{ individual.chinese_common_name_ai }}
+                                <input type="text" name="ai_species" id=""
+                                    value="{{ individual.chinese_common_name_ai }}" hidden>
+                            </td>
+                            <td class="align-middle">
+                                <input list="species_list" type="text" name="common_ch_name"
+                                    class="form-control form-control-sm pm-review-species" size="10">
+                            </td>
+                            <td>
+                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"
+                                    name="prey">
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-white btn-sm" data-bs-toggle="dropdown"
+                                    aria-expanded="false">
+                                    <span class="text-secondary hover-pointer" data-feather="more-vertical"></span>
+                                </button>
+                                <ul class="dropdown-menu p-2">
+                                    <li>
+                                        <input class="form-check-input" type="checkbox" id="flexCheckDefault"
+                                            name="tagged">
+                                        <label class="form-check-label" for="flexCheckDefault">標記</label>
+                                    </li>
+                                    <li>
+                                        <label for="ring_number_input">環號</label>
+                                        <input id="ring_number_input" class="form-control form-control-sm" type="text"
+                                            value="" name="ring_number">
+                                    </li>
+                                </ul>
+                                <button type="button" class="btn btn-outline-danger btn-sm border-0"
+                                    value="{{ medium.object_id }}_indi_{{ loop.index }}"
+                                    name="main_medium_indivudal_id">
+                                    <i data-feather="trash-2"></i>
+                                </button>
+                            </td>
+                            <td hidden>
+                                <input type="number" step="0.001" name="xmax" value={{individual.xmax}} hidden>
+                                <input type="number" step="0.001" name="xmin" value={{individual.xmin}} hidden>
+                                <input type="number" step="0.001" name="ymax" value={{individual.ymax}} hidden>
+                                <input type="number" step="0.001" name="ymin" value={{individual.ymin}} hidden>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <div class="d-flex flex-row-reverse">
+                    <!-- <small id="file_name" class="fw-light text-secondary file-name">
+                        <span style="font-size: 0.25rem;">{{ medium.file_name }}</span>
+                    </small> -->
+                    <select class="btn btn-white btn-sm" name="event" style="width: 5rem;">
+                        <option value=""></option>
+                        {% for event in events %}
+                        <option value="{{ event.event_id }}">{{ event.event_ch_name }}</option>
+                        {% endfor %}
+                    </select>
+                    <p class="text-secondary">事件</p>
+                </div>
             </div>
+
+            {% endfor %}
 
         </div>
-    </div>
 
-    <div id="pm-modal" class="position-fixed top-0 start-0 h-100 w-100">
-        <div id="pm-modal-content"
-            class="position-absolute top-50 start-50 translate-middle bg-light rounded shadow d-flex justify-content-between align-items-center"
-            style="width: 90%; height: 80%;">
+        <!-- Button trigger modal -->
+        <button id="open-confirm-modal" type="button" class="btn btn-success" data-bs-toggle="modal"
+            data-bs-target="#confirmModal">
+            <span data-feather="send" class="align-text-bottom"></span>
+            確認變更
+        </button>
 
-            <span id="close-pm-modal" class="position-absolute top-0 end-0 hover-pointer rounded m-1" data-feather="x"
-                class="m-1"></span>
-
-
-            <div id="back-medium" class="h-25 ps-2 pe-1 rounded hover-pointer d-flex align-items-center">
-                <!-- <span data-feather="chevron-left" class="text-secondary"></span> -->
-            </div>
-            <div id="pm-modal-panel" class="row">
-                <div id="pm-modal-img-panel" class="col">
-                    <div>
-                        <div id="horizontal" class="position-absolute border-bottom border-light"></div>
-                        <div id="vertical" class="position-absolute border-end border-light"></div>
-                        <div id="bounding-boxes" class="position-absolute"></div>
-                        <div id="bounding-box-painter" class="position-absolute" style="z-index: 9999;">
+        <!-- Modal -->
+        <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="confirmModalLabel">請再次確認</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div id="confirm-model-body" class="modal-body">
+                        <div id="name_alert" class="alert alert-danger" style="display: none;">
+                            物種中文俗名輸入有誤，請確認 (紅色背景標示)！
                         </div>
-                        <img id="pm-modal-image" class="rounded" src="{{ url_for('static', filename='img/img004.jpg')}}"
-                            alt="" style="width: 35rem;">
-                        <p>
-                            x: <span id="pointer-x"></span>
-                            y: <span id="pointer-y"></span>
-                        </p>
+                        確認要送出了嗎？此動作會直接更該資料庫的內容，請完全確認檢查完畢後再送出。
+                        你輸入的物種有：
+                    </div>
+                    <div>
+                        <ul class="list-group" id="confirm-species-list">
+
+                        </ul>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <form action="/review_done" method="POST">
+                            <input name="total_num_occurrences" value="{{ total_num_occurrences }}" type="text" hidden>
+                            <input name="perch_mount_name" value="{{ perch_mount_name }}" type="text" hidden>
+                            <input name="check_date" value="{{ check_date }}" type="text" hidden>
+                            <input name="reviewer" value="{{ current_user.id }}" type="text" hidden>
+                            <input name="num_media" type="number" value="{{ media | length }}" hidden>
+                            <button name="review_data" id="confirm-send-button" type="submit" class="btn btn-primary"
+                                onclick="sendReview(this)" value="">送出</button>
+                        </form>
                     </div>
                 </div>
-                <div id="pm-modal-individual-panel" class="col">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>AI 物種</th>
-                                <th>物種</th>
-                                <th>xmax</th>
-                                <th>xmin</th>
-                                <th>ymax</th>
-                                <th>ymin</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody id="modal-individual-container">
-                            <tr id="modal-individual-template" class="rounded">
-                                <td class="ai-species" scope="row"></td>
-                                <td scope="row">
-                                    <input class="form-control form-control-sm human-species" type="text">
-                                </td>
-                                <td class="xmax" scope="row"></td>
-                                <td class="xmin" scope="row"></td>
-                                <td class="ymax" scope="row"></td>
-                                <td class="ymin" scope="row"></td>
-                                <td>
-                                    <span class="delete-individual hover-pointer rounded m-1" data-feather="trash-2"
-                                        class="m-1"></span>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
             </div>
-            <div id="next-medium" class="h-25 ps-1 pe-2 rounded hover-pointer d-flex align-items-center">
-                <!-- <span data-feather="chevron-right" class="text-secondary"></span> -->
-            </div>
-
         </div>
-        <input id="current-modal-object-id" type="text" hidden>
+
     </div>
 
+    <input id="current_user" value="{{ current_user.member_id }}" type="number" hidden>
 </main>
 
 
 
-<p id="occurrence_info" hidden>{{ occurrences | tojson }}</p>
+<!-- <p id="occurrence_info" hidden></p> -->
 
+<script src="{{ url_for('static', filename='js/review/review.js')}}"></script>
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
 <script src="//code.jquery.com/jquery-1.12.4.js"></script>
 <script src="//code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-<script src="{{ url_for('static', filename='js/review.js')}}"></script>
+<script src="{{ url_for('static', filename='js/review/send_data.js')}}"></script>
 <script>
     document.onreadystatechange = function () {
         var state = document.readyState

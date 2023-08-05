@@ -1,5 +1,6 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-TW">
+
 
 <head>
     <meta charset="utf-8">
@@ -74,7 +75,7 @@
 <body>
 
     <header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
-        <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3 fs-6" href="{{ url_for('index') }}">NPTU Bird Lab</a>
+        <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3 fs-6" href="{{ url_for('index') }}">NPUST Bird Lab</a>
         <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse"
             data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false"
             aria-label="Toggle navigation">
@@ -82,7 +83,17 @@
         </button>
         <div class="navbar-nav">
             <div class="nav-item text-nowrap d-flex">
-                <a class="nav-link px-3" href="{{ url_for('index') }}">NPTU Bird Lab 棲架資料庫管理系統</a>
+                <a class="nav-link">
+
+                    {% if current_user.is_admin() %}
+                    <i data-feather="award"></i>
+                    {% endif %}
+                    {% if current_user.is_admin() %}
+                    <i data-feather="star"></i>
+                    {% endif %}
+                    {{ current_user.id }} 安安！
+                </a>
+                <a class="nav-link px-3" href="{{ url_for('index') }}">NPUST Bird Lab 棲架資料庫管理系統</a>
             </div>
         </div>
     </header>
@@ -96,13 +107,40 @@
                             <a class="nav-link {% if request.path == '/' %} active {% endif %}" aria-current="page"
                                 href="{{ url_for('index') }}">
                                 <span data-feather="eye" class="align-text-bottom"></span>
-                                Review
+                                開始
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" target="_blank" href="https://lookerstudio.google.com/s/k-HbfXeKhiU">
                                 <span data-feather="activity" class="align-text-bottom"></span>
                                 Google Looker Studio
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" target="_blank" href="https://hackmd.io/@chendada/SyVFi8Kyh">
+                                <span data-feather="book-open" class="align-text-bottom"></span>
+                                使用說明書
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.path == '/pending' %} active {% endif %}"
+                                href="{{ url_for('pending') }}">
+                                <span data-feather="list" class="align-text-bottom"></span>
+                                待處理資料
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.path == '/feature' %} active {% endif %}"
+                                href="{{ url_for('feature') }}">
+                                <span data-feather="heart" class="align-text-bottom"></span>
+                                精選
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.path == '/update' %} active {% endif %}"
+                                href="{{ url_for('update') }}">
+                                <span data-feather="edit-3" class="align-text-bottom"></span>
+                                修改資料
                             </a>
                         </li>
 
@@ -134,7 +172,7 @@
                                 行為
                             </a>
                         </li>
-                        <li class="nav-item">
+                        <li class="nav-item" style="display: none;">
                             <a class="nav-link {% if request.path == '/prey' %} active {% endif %}"
                                 href="{{ url_for('prey') }}">
                                 <span data-feather="github" class="align-text-bottom"></span>
@@ -148,6 +186,13 @@
                                 相機
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.path == '/event' %} active {% endif %}"
+                                href="{{ url_for('event') }}">
+                                <span data-feather="alert-triangle" class="align-text-bottom"></span>
+                                意外事件
+                            </a>
+                        </li>
                     </ul>
                     <h6
                         class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted text-uppercase">
@@ -155,7 +200,7 @@
                     </h6>
                     <ul class="nav flex-column mb-2">
                         <li class="nav-item">
-                            <a class="nav-link" href="/logout">
+                            <a class="nav-link" href="{{ url_for('logout') }}">
                                 <span data-feather="log-out" class="align-text-bottom"></span>
                                 Sign out
                             </a>

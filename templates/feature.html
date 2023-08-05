@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+
+<main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+
+
+    <div
+        class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <div>
+            <h3 class="h3 mb-2">精選影像</h3>
+        </div>
+        <div>
+            <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample"
+                aria-controls="offcanvasExample">
+                <i data-feather="filter"></i> 篩選
+            </button>
+
+            <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample"
+                aria-labelledby="offcanvasExampleLabel">
+                <div class="offcanvas-header">
+                    <h5 class="offcanvas-title" id="offcanvasExampleLabel">篩選</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body">
+                    <div>
+                        {{ feature_filter_form.start_date.label(class="form-label") }}
+                        {{ feature_filter_form.start_date(class="form-control") }}
+                        {{ feature_filter_form.end_date.label(class="form-label") }}
+                        {{ feature_filter_form.end_date(class="form-control") }}
+
+                        {{ feature_filter_form.perch_mount_names.label(class="form-label") }}
+                        {{ feature_filter_form.perch_mount_names(class="form-select", size=5, multiple="multiple") }}
+
+                        {{ feature_filter_form.species.label(class="form-label") }}
+                        {{ feature_filter_form.species(class="form-select", size=5, multiple="multiple") }}
+                        {{ feature_filter_form.behavior.label(class="form-label") }}
+                        {{ feature_filter_form.behavior(class="form-select", size=5, multiple="multiple") }}
+                    </div>
+                    <div class="dropdown mt-3">
+                        <button id="search" class="btn btn-secondary" type="button">
+                            <i data-feather="search"></i>
+                            搜尋
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas"
+                data-bs-target="#offcanvasPreference" aria-controls="offcanvasPreference">
+                <i data-feather="settings"></i> 偏好設定
+            </button>
+            <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasPreference"
+                aria-labelledby="offcanvasExampleLabel">
+                <div class="offcanvas-header">
+                    <h5 class="offcanvas-title" id="offcanvasExampleLabel">偏好設定</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body">
+                    <label for="imageSizeRange" class="form-label">圖片大小</label>
+                    <input type="range" min=10 max=30 class="form-range" id="imageSizeRange" value=20>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <div class="shadow-sm bg-light p-3 rounded-2">
+        <div id="load" class="text-center">
+            <p class="text-secondary">正在讀取資料並下載所需要的照片...</p>
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+
+        <div id="contents">
+            <div class="d-flex justify-content-center">
+                <p class="fw-light text-secondary">第 <span id="current_page">0</span> 頁</p>
+            </div>
+            <div id="media_container" class="d-flex flex-wrap">
+
+
+            </div>
+
+            <div class="d-flex justify-content-center">
+                <nav aria-label="...">
+                    <ul id="pagination" class="pagination">
+
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+    <!-- full screen image -->
+    <div id="full_screen_image" onclick="this.style.display='none';"></div>
+</main>
+<script src="{{ url_for('static', filename='js/feature.js')}}"></script>
+<script>
+    document.onreadystatechange = function () {
+        var state = document.readyState
+        if (state == 'interactive') {
+            document.getElementById('contents').style.visibility = "hidden";
+        } else if (state == 'complete') {
+            setTimeout(function () {
+                document.getElementById('interactive');
+                document.getElementById('load').style.display = "none";
+                document.getElementById('contents').style.visibility = "visible";
+            }, 1000);
+        }
+    }
+</script>
+
+
+{% endblock %}

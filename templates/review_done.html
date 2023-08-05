@@ -6,14 +6,16 @@
 <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
     <div
         class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <h3 class="h3">{{perch_mount_name}} {{ check_date }}</h3>
+        <h3 class="h3">{{ perch_mount_name }} {{ check_date }}</h3>
     </div>
     <div class="shadow-sm bg-light p-3 rounded-2">
 
         <div class="alert alert-success">
-            Review 物種已完成！
+            檢視物種已完成！
         </div>
-        <a href="{{ url_for('index') }}"><button type="button" class="btn btn-primary">回到主頁</button></a>
+        <a href="{{ url_for('index') }}"><button type="button" class="btn btn-primary m-1">回到主頁</button></a>
+        <a href="/review/{{ perch_mount_name }}/any/any"><button type="button"
+                class="btn btn-primary m-1">繼續檢視</button></a>
     </div>
 
 </main>

@@ -2,46 +2,65 @@
 
 
 {% block content %}
+<link href="{{ url_for('static', filename='css/index.css')}}" rel="stylesheet">
 
 <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
   <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2">Review 區間資料</h1>
+    <h1 class="h2">棲架資料庫管理系統</h1>
   </div>
-  <div class="shadow-sm bg-light p-3 rounded-2 d-flex justify-content-start">
-    <div>
-      <div class=" mb-3">
-        <label for="perch_mount_name" class="form-label">棲架名稱</label>
-        <input id="perch_mount_name" type="text" class="form-control" list="perch_mount_datalist">
-        <datalist id="perch_mount_datalist">
-          {% for pm_name in perch_mount_names %}
-          <option value="{{ pm_name }}"></option>
-          {% endfor %}
-        </datalist>
+  <div class="row">
+    <div class="col">
+      <button id="review-cover" type="button" class="overflow-hidden rounded-5 pm-cover-frame position-relative"
+        data-bs-toggle="modal" data-bs-target="#exampleModal">
+        <h2 class="text-light position-absolute pm-cover-title bottom-0 mb-5 ms-5">檢視物種</h2>
+        <img class="pm-cover-photo img-fluid" src="{{ url_for('static', filename='img/review_cover_photo.JPG')}}"
+          alt="">
+      </button>
+    </div>
+    <div class="col">
+      <button id="empty-check-cover" type="button" class="overflow-hidden rounded-5 pm-cover-frame position-relative"
+        data-bs-toggle="modal" data-bs-target="#exampleModal">
+        <h2 class="text-light position-absolute pm-cover-title bottom-0 end-0 mb-5 me-5">檢查空拍</h2>
+        <img class="pm-cover-photo img-fluid" src="{{ url_for('static', filename='img/empty_cover_photo.JPG')}}" alt="">
+      </button>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">輸入區間資料資訊</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div>
+              <div class=" mb-3">
+                <label for="perch_mount_name" class="form-label">棲架名稱</label>
+                <input id="perch_mount_name" type="text" class="form-control" list="perch_mount_datalist">
+                <datalist id="perch_mount_datalist">
+                  {% for pm_name in perch_mount_names %}
+                  <option value="{{ pm_name }}"></option>
+                  {% endfor %}
+                </datalist>
+              </div>
+              <div class="mb-3">
+                <!-- <label for="check_date" class="form-label">檢查日期</label>
+                <input id="check_date" type="date" class="form-control"> -->
+                <label for="check_date" class="form-label">開始時間</label>
+                <input id="start_datetime" type="date" class="form-control" value="2000-01-01">
+                <label for="check_date" class="form-label">結束時間</label>
+                <input id="end_datetime" type="date" class="form-control" value="2050-01-01">
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button id="review_button" class="btn btn-primary">開始檢視物種</button>
+            <button id="empty_check_button" class="btn btn-primary">開始檢查空拍</button>
+          </div>
+        </div>
       </div>
-      <div class="mb-3">
-        <label for="check_date" class="form-label">檢查日期</label>
-        <input id="check_date" type="date" class="form-control">
-      </div>
-      <button id="review_button" class="btn btn-primary">辨認物種</button>
-      <button id="empty_check_button" class="btn btn-primary">檢查空拍</button>
     </div>
 
-    <!-- <form method="POST" action="">
-      <div class=" mb-3">
-        {{ section_select_form.perch_mount_name.label(class="form-label") }}
-        {{ section_select_form.perch_mount_name(class="form-control", list="perch-mount-datalist") }}
-        <datalist id="perch-mount-datalist">
-          {% for pm_name in perch_mount_names %}
-          <option value="{{ pm_name }}">
-            {% endfor %}
-        </datalist>
-      </div>
-      <div class="mb-3">
-        {{ section_select_form.check_date.label(class="form-label") }}
-        {{ section_select_form.check_date(class="form-control") }}
-      </div>
-      {{ section_select_form.review_button(class="btn btn-primary") }}
-    </form> -->
   </div>
 
 </main>

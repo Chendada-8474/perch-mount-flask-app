@@ -1,0 +1,167 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+<link href="https://cdn.jsdelivr.net/gh/tofsjonas/sortable@latest/sortable.min.css" rel="stylesheet" />
+
+<style>
+    a.disabled {
+        pointer-events: none;
+        color: grey;
+    }
+</style>
+
+
+<main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+    <div
+        class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h3 class="h3">待處理資料</h3>
+
+    </div>
+
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane"
+                type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">待人力檢查資料</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-tab-pane"
+                type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">待 AI 辨識</button>
+        </li>
+    </ul>
+    <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab"
+            tabindex="0">
+
+            <div class="row">
+                <div class="col-3">
+                    <div class="my-3">
+                        <select id="project_filter" class="form-select" aria-label="Default select example">
+                            <option value="" selected>-- 篩選計畫 --</option>
+                            {% for project in projects %}
+                            <option value="{{ project.project_id }}">{{ project.project_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <input id="member_id" type="number" value="{{ current_user.member_id }}" hidden>
+            <table class="table sortable">
+                <thead>
+                    <tr>
+                        <th>優先處裡</th>
+                        <th scope="col">認領</th>
+                        <th scope="col">棲架名稱</th>
+                        <th scope="col">計畫</th>
+                        <th scope="col">
+                            待空拍檢查
+                            <br>
+                            ({{ num_unempty_checked }} 個檔案)
+                        </th>
+                        <th scope="col">
+                            待物種辨識
+                            <br>
+                            ({{ num_unreviewed }} 個檔案)
+                        </th>
+                        <th scope="col">最後備註</th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for pm in count %}
+                    <tr id="perch_mount_{{ pm.perch_mount_id }}">
+                        <th>
+                            {% if current_user.super_admin %}
+                            <input class="form-check-input set-priority" type="checkbox" value="{{ pm.perch_mount_id }}"
+                                {% if pm.is_priority %}checked{% endif %}>
+                            {% else %}
+                            {% endif %}
+                            {% if pm.is_priority %}
+                            <i data-feather="check"></i>
+                            {% endif %}
+                        </th>
+                        <td>
+
+                            {% if pm.claim_by %}
+                            {% if pm.user_name == current_user.id %}
+                            <input class="form-check-input claim" type="checkbox" value="{{ pm.perch_mount_id }}"
+                                checked>
+                            {% endif %}
+                            {{ pm.first_name }} {{ pm.user_name }}
+                            {% else %}
+                            <input class="form-check-input claim" type="checkbox" value="{{ pm.perch_mount_id }}">
+                            {% endif %}
+                        </td>
+                        <td>{{ pm.perch_mount_name }}
+                        </td>
+                        <td>
+                            {{ pm.project_name }}
+                            <input type="number" value="{{ pm.project_id }}" name="project_id" hidden>
+                        </td>
+                        <td class="empty-count rounded align-middle">{% if pm.empty_count %}{{ pm.empty_count }}{% else
+                            %}0{% endif %}</td>
+                        <td class="detected-count rounded align-middle">{% if pm.detected_count %}{{ pm.detected_count
+                            }}{%
+                            else %}0{% endif %}</td>
+                        <td>
+                            {{ pm.latest_note }}
+                        </td>
+                        <td>
+                            <button class="btn btn-white" type="button">
+                                <a href="/empty_check/{{pm.perch_mount_name}}/any/any"
+                                    class="{% if not pm.empty_count %}disabled{% endif %}">
+                                    <i data-feather="video-off"></i>
+                                    檢查空拍
+                                </a>
+                            </button>
+                            <button class="btn btn-white" type="button">
+                                <a href="/review/{{pm.perch_mount_name}}/any/any"
+                                    class="{% if not pm.detected_count %}disabled{% endif %}">
+                                    <i data-feather="eye"></i>
+                                    檢視物種
+                                </a>
+                            </button>
+                            <button class="btn btn-white" type="button" data-bs-toggle="offcanvas"
+                                data-bs-target="#offcanvasTop" aria-controls="offcanvasTop" name="show_trand"
+                                value="{{ pm.perch_mount_id }}">
+                                <i data-feather="trending-up"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+        <div class="tab-pane fade" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
+            {% if not ai_tasks | length %}
+            <div class="alert alert-success mt-3" role="alert">
+                目前沒有正在等待自動辨識的資料。
+            </div>
+            {% else %}
+            <ul class="list-group mt-3">
+                {% for task in ai_tasks %}
+                <li class="list-group-item">{{ task }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </div>
+
+    </div>
+
+
+
+
+    <div class="offcanvas offcanvas-top" style="height: 80%;" tabindex="-1" id="offcanvasTop"
+        aria-labelledby="offcanvasTopLabel">
+        <div class="offcanvas-body">
+            <div id="pending" style="width: 100%; height: 100%;"></div>
+        </div>
+    </div>
+
+</main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.2/echarts.min.js"></script>
+<script src="{{ url_for('static', filename='js/pending.js')}}"></script>
+<script src="https://cdn.jsdelivr.net/gh/tofsjonas/sortable@latest/sortable.min.js"></script>
+{% endblock %}

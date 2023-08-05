@@ -1,0 +1,150 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+<link href="{{ url_for('static', filename='css/review.css')}}" rel="stylesheet">
+<main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+    <div
+        class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h3 class="h3">修改資料</h3>
+    </div>
+
+    {% if current_user.is_admin() %}
+    <div class="shadow-sm bg-light p-3 rounded-2">
+        <div class="row my-2">
+            <div class="col-2">請輸入該筆資料日期</div>
+            <div class="col-4">請輸入 Object ID</div>
+        </div>
+        <div class="row my-2">
+            <div class="col-2">
+                <input id="medium_date" type="date" class="form-control">
+            </div>
+            <div class="col-4 d-flex flex-wrap">
+                <input id="object_id" type="text" class="form-control">
+            </div>
+            <div class="col-2">
+                <button id="search_occurrence" type="button" class="btn btn-primary" data-bs-toggle="modal"
+                    data-bs-target="#editModal">搜尋</button>
+            </div>
+        </div>
+        <div class="row my-2">
+            <div class="col text-secondary">
+                註：
+                <ul>
+                    <li>加讓日期是為了優化資料庫搜尋。</li>
+                    <li>30 分鐘內上傳的資料無法被更改。</li>
+                </ul>
+
+            </div>
+        </div>
+        <!-- Modal -->
+        <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-fullscreen">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">修改資料</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="no-data">
+                            <div class="alert alert-warning">
+                                日期錯誤或是沒有這個 Object ID
+                            </div>
+                        </div>
+                        <div id="insert_success" style="display: none;">
+                            <div class="alert alert-success">
+                                新增成功
+                            </div>
+                        </div>
+                        <div id="insert_fail" style="display: none;">
+                            <div class="alert alert-warning">
+                                新增失敗，請聯絡管理員。
+                            </div>
+                        </div>
+                        <div id="edit-content" style="display: none;">
+                            <div class="row">
+                                <div class="col">
+
+                                    <div id="boxing-container" class="position-relative">
+                                        <div id="horizontal" class="position-absolute border-bottom border-light"></div>
+                                        <div id="vertical" class="position-absolute border-end border-light"></div>
+                                        <div id="bounding-box-painter" class="position-absolute" style="z-index: 9999;">
+                                        </div>
+                                        <img id="edit_modal_image" class="rounded" src="" alt=""
+                                            style="width: 800px; height:600px;">
+                                    </div>
+
+                                    <video aria-colcount="rounded" src="" class="rounded card-img-top"
+                                        style="width:50rem;" controls></video>
+                                </div>
+                                <div class="col">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th></th>
+                                                <th>AI 物種</th>
+                                                <th>物種</th>
+                                                <th>xmax</th>
+                                                <th>xmin</th>
+                                                <th>ymax</th>
+                                                <th>ymin</th>
+                                                <th></th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="edit_modal_individuals">
+
+                                        </tbody>
+                                    </table>
+
+                                    <button id="edit_add_individual" class="btn btn-primary btn-sm mt-3">
+                                        <i data-feather="plus"></i> 新增個體
+                                    </button>
+
+                                    <!-- medium metadata -->
+                                    <div class="mt-5" id="edit_modal_medium_infomation">
+                                        <p class="fw-light text-secondary">
+                                            Object id: <span class="fw-light text-secondary"
+                                                id="info_object_id"></span><br>
+                                            棲架: <span class="fw-light text-secondary"
+                                                id="info_perch_mount_name"></span><br>
+                                            拍攝時間: <span class="fw-light text-secondary"
+                                                id="info_medium_datetime"></span><br>
+                                            檔案位置: <span class="fw-light text-secondary" id="info_path"></span><br>
+                                            檔案類型: <span class="fw-light text-secondary" id="info_file_type"></span><br>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-4 flex-wrap d-flex">
+                                    <p class="me-2">x: <span id="painter_x"></span></p>
+                                    <p>y: <span id="painter_y"></span></p>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button id="send_data" type="button" class="btn btn-primary">送出變更</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    {% else %}
+    <div class="alert alert-danger" role="alert">
+        你沒有使用變更資料的權限
+    </div>
+    {% endif %}
+
+</main>
+<script src="{{ url_for('static', filename='js/update.js')}}"></script>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
+<script src="//code.jquery.com/jquery-1.12.4.js"></script>
+<script src="//code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+{% endblock %}
